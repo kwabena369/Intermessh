@@ -2,7 +2,8 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 class AuthService {
   final String baseUrl = 'http://localhost::3000/api';
   final storage = FlutterSecureStorage();

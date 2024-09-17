@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:outcome/services/Google/Authen.dart';
 import 'package:outcome/widgets/custome_SignIn_btn.dart';
 class AuthenPage extends StatefulWidget {
   const AuthenPage({Key? key}) : super(key: key);
@@ -12,6 +13,7 @@ class _AuthenPageState extends State<AuthenPage> with SingleTickerProviderStateM
   late AnimationController _controller;
   late Animation<double> _fadeAnimation;
   late Animation<double> _scaleAnimation;
+  ValueNotifier userCredential = ValueNotifier('');
 
   @override
   void initState() {
@@ -91,7 +93,12 @@ class _AuthenPageState extends State<AuthenPage> with SingleTickerProviderStateM
                   text: 'Continue with Google',
                   color: Colors.white,
                   textColor: Colors.black87,
-                  onPressed: () {
+                  onPressed: () async{
+                     userCredential.value = await signInWithGoogle();
+                            if (userCredential.value != null)
+                              // ignore: avoid_print
+                              print(userCredential.value.user!.email);
+                          
                   },
                 ),
                 const SizedBox(height: 16),
