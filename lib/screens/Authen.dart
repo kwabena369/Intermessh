@@ -92,7 +92,6 @@ class _AuthenPageState extends State<AuthenPage> with SingleTickerProviderStateM
                   color: Colors.white,
                   textColor: Colors.black87,
                   onPressed: () {
-                    // Implement Google Sign-In
                   },
                 ),
                 const SizedBox(height: 16),
@@ -102,7 +101,6 @@ class _AuthenPageState extends State<AuthenPage> with SingleTickerProviderStateM
                   color: Colors.black,
                   textColor: Colors.white,
                   onPressed: () {
-                    // Implement Apple Sign-In
                   },
                 ),
                 const SizedBox(height: 24),
@@ -120,19 +118,19 @@ class _AuthenPageState extends State<AuthenPage> with SingleTickerProviderStateM
           TextFormField(
   decoration: InputDecoration(
     hintText: 'Email',
-    contentPadding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 10.0), // Padding around the text
+    contentPadding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 10.0), 
     border: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(20.0), // Rounded borders
+      borderRadius: BorderRadius.circular(20.0), 
     ),
     focusedBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(20.0), // Keep rounded when focused
+      borderRadius: BorderRadius.circular(20.0), 
       borderSide: BorderSide(
-        color: Colors.red, // Red border color when focused
-        width: 2.0, // Border thickness
+        color: Colors.red, 
+        width: 2.0, 
       ),
     ),
     enabledBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(20.0), // Rounded corners when not focused
+      borderRadius: BorderRadius.circular(20.0), //
       borderSide: BorderSide(
         color: Colors.grey, // Default border color
         width: 1.0, // Default border thickness
@@ -153,18 +151,18 @@ class _AuthenPageState extends State<AuthenPage> with SingleTickerProviderStateM
     focusedBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(20.0), // Keep rounded when focused
       borderSide: BorderSide(
-        color: Colors.red, // Red border color when focused
+        color: Colors.red, 
         width: 2.0, // Border thickness
       ),
     ),
     enabledBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(20.0), // Rounded corners when not focused
+      borderRadius: BorderRadius.circular(20.0),
       borderSide: BorderSide(
-        color: Colors.grey, // Default border color
-        width: 1.0, // Default border thickness
+        color: Colors.grey, 
+        width: 1.0,
       ),
     ),
-    prefixIcon: Icon(Icons.lock), // Lock icon for password field
+    prefixIcon: Icon(Icons.lock),
   ),
 ),
                 const SizedBox(height: 24),
@@ -203,3 +201,4 @@ class _AuthenPageState extends State<AuthenPage> with SingleTickerProviderStateM
     );
   }
 }
+//  the CWA of the guy is 77 = wow
