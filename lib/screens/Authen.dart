@@ -1,6 +1,9 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:outcome/services/Google/Authen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:outcome/widgets/custome_SignIn_btn.dart';
 class AuthenPage extends StatefulWidget {
   const AuthenPage({Key? key}) : super(key: key);
@@ -93,13 +96,26 @@ class _AuthenPageState extends State<AuthenPage> with SingleTickerProviderStateM
                   text: 'Continue with Google',
                   color: Colors.white,
                   textColor: Colors.black87,
-                  onPressed: () async{
-                     userCredential.value = await signInWithGoogle();
-                            if (userCredential.value != null)
-                              // ignore: avoid_print
-                              print(userCredential.value.user!.email);
-                          
-                  },
+   onPressed: () async {
+  try {
+    final userData = await signInWithGoogle();
+    if (userData != null) {
+    Navigator.of(context).pushReplacementNamed('/home');
+      return;
+    } else {
+      print('Sign in failed');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Sign in failed. Please try again.')),
+      );
+    }
+  } catch (e) {
+    print('Error during sign in: $e');
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('An error occurred. Please try again.')),
+    );
+  }
+}
+                  ,
                 ),
                 const SizedBox(height: 16),
                 CustomSignInButton(
@@ -209,3 +225,37 @@ class _AuthenPageState extends State<AuthenPage> with SingleTickerProviderStateM
   }
 }
 //  the CWA of the guy is 77 = wow
+Future<Map<String, dynamic>?> signInWithGoogle() async {
+  try {
+    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+    if (googleUser == null) {
+      print('User cancelled the sign-in process');
+      return null;
+    }
+
+    final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth.accessToken,
+      idToken: googleAuth.idToken,
+    );
+
+    final UserCredential userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
+    final User? user = userCredential.user;
+
+    if (user != null) {
+      return {
+        'uid': user.uid,
+        'displayName': user.displayName,
+        'email': user.email,
+        'photoURL': user.photoURL,
+      };
+    }
+    
+    print('Sign in failed: No user data');
+    return null;
+  } catch (e) {
+    print('Error during Google sign in: $e');
+    return null;
+  }
+}

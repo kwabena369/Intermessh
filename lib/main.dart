@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:outcome/firebase_options.dart';
 import 'package:outcome/screens/Authen.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:outcome/screens/Authenticated/Home.dart';
 
+//  the super mega splashscreen
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
 
@@ -106,12 +110,29 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
     );
   }
 }
+//  the main adicrument...
+void main() async { 
 
-// Update your main.dart
-void main() { 
-  runApp(const MaterialApp(
-    home: SplashScreen(),
+ WidgetsFlutterBinding.ensureInitialized();
+  
+  try {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+    print('Firebase initialized successfully');
+  } catch (e) {
+    print('Failed to initialize Firebase: $e');
+  }
+
+  runApp(MaterialApp(
+    home: const SplashScreen(),
     title: 'Intermessh',
     debugShowCheckedModeBanner: false,
+      routes: {
+        '/auth': (context) => const AuthenPage(),
+        '/home': (context) => const Home(), // Assuming your Home widget is called 'Home'
+      },
   ));
 }
+
+

@@ -1,22 +1,36 @@
-// ignore_for_file: avoid_print
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
-Future<dynamic> signInWithGoogle() async {
-    try {
-      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+Future<Map<String, dynamic>?> signInWithGoogle() async {
+  try {
+    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
-      final GoogleSignInAuthentication? googleAuth =
-          await googleUser?.authentication;
+    if (googleUser == null) return null; // User cancelled the sign-in process
 
-      final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth?.accessToken,
-        idToken: googleAuth?.idToken,
-      );
+    final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
 
-      return await FirebaseAuth.instance.signInWithCredential(credential);
-    } on Exception catch (e) {
-      print('exception->$e');
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth.accessToken,
+      idToken: googleAuth.idToken,
+    );
+
+    final UserCredential userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
+    final User? user = userCredential.user;
+    print("From the otherside @@@@@@2");
+    print(user);
+    if (user != null) {
+      print("#######$user");
+      return {
+        'uid': user.uid,
+        'displayName': user.displayName,
+        'email': user.email,
+        'photoURL': user.photoURL,
+      };
     }
+    
+    return null;
+  } catch (e) {
+    print('exception->$e');
+    return null;
   }
+}
