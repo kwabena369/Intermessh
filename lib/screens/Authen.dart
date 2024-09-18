@@ -1,10 +1,11 @@
-import 'package:firebase_core/firebase_core.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:outcome/widgets/custome_SignIn_btn.dart';
+
+import '../services/Google/Authen.dart';
+
+//  in here the person would select the option that they would in doing the things
 class AuthenPage extends StatefulWidget {
   const AuthenPage({Key? key}) : super(key: key);
 
@@ -35,6 +36,20 @@ class _AuthenPageState extends State<AuthenPage> with SingleTickerProviderStateM
     );
 
     _controller.forward();
+
+    // Use a Future.microtask to schedule the login check after the build is complete
+    Future.microtask(() => _checkLoginStatus());
+  }
+
+  void _checkLoginStatus() async {
+    final prefs = await SharedPreferences.getInstance();
+    final userName = prefs.getString("UserName");
+    if (userName != null && userName.isNotEmpty) {
+      // User is already logged in, navigate to home screen
+      if (mounted) {
+        Navigator.of(context).pushReplacementNamed('/home');
+      }
+    }
   }
 
   @override
@@ -47,6 +62,7 @@ class _AuthenPageState extends State<AuthenPage> with SingleTickerProviderStateM
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
+        //  for scrrollabity sake with do that there ,,..
         child: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24.0),
@@ -96,26 +112,28 @@ class _AuthenPageState extends State<AuthenPage> with SingleTickerProviderStateM
                   text: 'Continue with Google',
                   color: Colors.white,
                   textColor: Colors.black87,
-   onPressed: () async {
-  try {
-    final userData = await signInWithGoogle();
-    if (userData != null) {
-    Navigator.of(context).pushReplacementNamed('/home');
-      return;
-    } else {
-      print('Sign in failed');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Sign in failed. Please try again.')),
-      );
-    }
-  } catch (e) {
-    print('Error during sign in: $e');
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('An error occurred. Please try again.')),
-    );
-  }
-}
-                  ,
+                  onPressed: () async {
+                    try {
+                      final userData = await signInWithGoogle();
+                      if (userData != null) {
+                        final pref = await SharedPreferences.getInstance();
+                        pref.setString("UserName", userData['displayName']);
+                        print(userData);
+                        Navigator.of(context).pushReplacementNamed('/home');
+                        return;
+                      } else {
+                        print('Sign in failed');
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Sign in failed. Please try again.')),
+                        );
+                      }
+                    } catch (e) {
+                      print('Error during sign in: $e');
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('An error occurred. Please try again.')),
+                      );
+                    }
+                  },
                 ),
                 const SizedBox(height: 16),
                 CustomSignInButton(
@@ -124,6 +142,7 @@ class _AuthenPageState extends State<AuthenPage> with SingleTickerProviderStateM
                   color: Colors.black,
                   textColor: Colors.white,
                   onPressed: () {
+                    // Implement Apple sign in
                   },
                 ),
                 const SizedBox(height: 24),
@@ -136,58 +155,56 @@ class _AuthenPageState extends State<AuthenPage> with SingleTickerProviderStateM
                   ),
                 ),
                 const SizedBox(height: 24),
-
-                //  for the email 
-          TextFormField(
-  decoration: InputDecoration(
-    hintText: 'Email',
-    contentPadding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 10.0), 
-    border: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(20.0), 
-    ),
-    focusedBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(20.0), 
-      borderSide: BorderSide(
-        color: Colors.red, 
-        width: 2.0, 
-      ),
-    ),
-    enabledBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(20.0), //
-      borderSide: BorderSide(
-        color: Colors.grey, // Default border color
-        width: 1.0, // Default border thickness
-      ),
-    ),
-    prefixIcon: Icon(Icons.email), // Email icon
-  ),
-),
+                TextFormField(
+                  decoration: InputDecoration(
+                    hintText: 'Email',
+                    contentPadding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 10.0),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20.0),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20.0),
+                      borderSide: BorderSide(
+                        color: Colors.red,
+                        width: 2.0,
+                      ),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20.0),
+                      borderSide: BorderSide(
+                        color: Colors.grey,
+                        width: 1.0,
+                      ),
+                    ),
+                    prefixIcon: Icon(Icons.email),
+                  ),
+                ),
                 const SizedBox(height: 16),
-             TextFormField(
-  obscureText: true, // Hide the text for password input
-  decoration: InputDecoration(
-    hintText: 'Password',
-    contentPadding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 10.0), // Padding around the text
-    border: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(20.0), // Rounded corners
-    ),
-    focusedBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(20.0), // Keep rounded when focused
-      borderSide: BorderSide(
-        color: Colors.red, 
-        width: 2.0, // Border thickness
-      ),
-    ),
-    enabledBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(20.0),
-      borderSide: BorderSide(
-        color: Colors.grey, 
-        width: 1.0,
-      ),
-    ),
-    prefixIcon: Icon(Icons.lock),
-  ),
-),
+                TextFormField(
+                  obscureText: true,
+                  decoration: InputDecoration(
+                    hintText: 'Password',
+                    contentPadding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 10.0),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20.0),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20.0),
+                      borderSide: BorderSide(
+                        color: Colors.red,
+                        width: 2.0,
+                      ),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20.0),
+                      borderSide: BorderSide(
+                        color: Colors.grey,
+                        width: 1.0,
+                      ),
+                    ),
+                    prefixIcon: Icon(Icons.lock),
+                  ),
+                ),
                 const SizedBox(height: 24),
                 const Text(
                   'By continuing, you agree to our Terms of Service and Privacy Policy',
@@ -222,40 +239,5 @@ class _AuthenPageState extends State<AuthenPage> with SingleTickerProviderStateM
         ),
       ),
     );
-  }
-}
-//  the CWA of the guy is 77 = wow
-Future<Map<String, dynamic>?> signInWithGoogle() async {
-  try {
-    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-
-    if (googleUser == null) {
-      print('User cancelled the sign-in process');
-      return null;
-    }
-
-    final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-    final credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth.accessToken,
-      idToken: googleAuth.idToken,
-    );
-
-    final UserCredential userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
-    final User? user = userCredential.user;
-
-    if (user != null) {
-      return {
-        'uid': user.uid,
-        'displayName': user.displayName,
-        'email': user.email,
-        'photoURL': user.photoURL,
-      };
-    }
-    
-    print('Sign in failed: No user data');
-    return null;
-  } catch (e) {
-    print('Error during Google sign in: $e');
-    return null;
   }
 }

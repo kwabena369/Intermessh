@@ -5,10 +5,12 @@ Future<Map<String, dynamic>?> signInWithGoogle() async {
   try {
     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
-    if (googleUser == null) return null; // User cancelled the sign-in process
+    if (googleUser == null) {
+      print('User cancelled the sign-in process');
+      return null;
+    }
 
     final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-
     final credential = GoogleAuthProvider.credential(
       accessToken: googleAuth.accessToken,
       idToken: googleAuth.idToken,
@@ -16,10 +18,8 @@ Future<Map<String, dynamic>?> signInWithGoogle() async {
 
     final UserCredential userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
     final User? user = userCredential.user;
-    print("From the otherside @@@@@@2");
-    print(user);
+
     if (user != null) {
-      print("#######$user");
       return {
         'uid': user.uid,
         'displayName': user.displayName,
@@ -28,9 +28,11 @@ Future<Map<String, dynamic>?> signInWithGoogle() async {
       };
     }
     
+    
+    print('Sign in failed: No user data');
     return null;
   } catch (e) {
-    print('exception->$e');
+    print('Error during Google sign in: $e');
     return null;
   }
 }

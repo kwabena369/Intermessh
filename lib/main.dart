@@ -1,10 +1,37 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:outcome/firebase_options.dart';
 import 'package:outcome/screens/Authen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:outcome/screens/Authenticated/Home.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-//  the super mega splashscreen
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  try {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+    print('Firebase initialized successfully');
+  } catch (e) {
+    print('Failed to initialize Firebase: $e');
+  }
+
+  // Enable back button callback
+  SystemChannels.platform.invokeMethod('SystemNavigator.setNavigationBarColor', Colors.transparent);
+
+  runApp(MaterialApp(
+    home: const SplashScreen(),
+    title: 'Intermessh',
+    debugShowCheckedModeBanner: false,
+    routes: {
+      '/auth': (context) => const AuthenPage(),
+      '/home': (context) => const Home(),
+    },
+  ));
+}
+
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
 
@@ -35,11 +62,22 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
 
     _controller.forward();
 
-    Future.delayed(const Duration(seconds: 3), () {
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (_) => const AuthenPage()),
-      );
-    });
+    _checkAuthAndNavigate();
+  }
+
+  Future<void> _checkAuthAndNavigate() async {
+    await Future.delayed(const Duration(seconds: 3)); // Minimum splash screen duration
+
+    final prefs = await SharedPreferences.getInstance();
+    final userName = prefs.getString("UserName");
+
+    if (!mounted) return; // Check if the widget is still in the tree
+
+    if (userName != null && userName.isNotEmpty) {
+      Navigator.of(context).pushReplacementNamed('/home');
+    } else {
+      Navigator.of(context).pushReplacementNamed('/auth');
+    }
   }
 
   @override
@@ -110,29 +148,3 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
     );
   }
 }
-//  the main adicrument...
-void main() async { 
-
- WidgetsFlutterBinding.ensureInitialized();
-  
-  try {
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
-    print('Firebase initialized successfully');
-  } catch (e) {
-    print('Failed to initialize Firebase: $e');
-  }
-
-  runApp(MaterialApp(
-    home: const SplashScreen(),
-    title: 'Intermessh',
-    debugShowCheckedModeBanner: false,
-      routes: {
-        '/auth': (context) => const AuthenPage(),
-        '/home': (context) => const Home(), // Assuming your Home widget is called 'Home'
-      },
-  ));
-}
-
-

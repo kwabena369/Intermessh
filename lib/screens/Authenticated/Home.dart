@@ -1,7 +1,6 @@
-import 'dart:async';
-import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:vector_math/vector_math.dart' as vector;
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -10,38 +9,70 @@ class Home extends StatefulWidget {
   _HomeState createState() => _HomeState();
 }
 
-class _HomeState extends State<Home> with TickerProviderStateMixin {
+class _HomeState extends State<Home> {
   bool _isDarkMode = false;
-  double _downloadSpeed = 0.0;
-  double _uploadSpeed = 0.0;
-  Timer? _speedUpdateTimer;
-  late AnimationController _downloadAnimationController;
-  late AnimationController _uploadAnimationController;
+  double _downloadRate = 0.0;
+  String _downloadProgress = '0';
+  String _unitText = 'Kbps';
+  bool _isTesting = false;
 
   @override
   void initState() {
     super.initState();
-    _startSpeedSimulation();
-    _downloadAnimationController = AnimationController(vsync: this, duration: const Duration(seconds: 1));
-    _uploadAnimationController = AnimationController(vsync: this, duration: const Duration(seconds: 1));
+    _startSpeedTest();
   }
 
-  @override
-  void dispose() {
-    _speedUpdateTimer?.cancel();
-    _downloadAnimationController.dispose();
-    _uploadAnimationController.dispose();
-    super.dispose();
+  Future<void> _startSpeedTest() async {
+    setState(() {
+      _isTesting = true;
+      _downloadRate = 0.0;
+      _downloadProgress = '0';
+    });
+
+    final url = 'https://drive.google.com/file/d/1lEn1DtJQW6-nTcoS_FG7-EB3Kamy0147/view?usp=sharing';
+    final stopwatch = Stopwatch()..start();
+
+    try {
+      final response = await http.get(Uri.parse(url));
+
+      if (response.statusCode == 200) {
+        final elapsed = stopwatch.elapsedMilliseconds;
+        final speedInKbps = ((response.bodyBytes.length / 1024) / (elapsed / 1000)) * 8;
+
+        setState(() {
+          _isTesting = false;
+          _downloadRate = speedInKbps;
+          _downloadProgress = '100';
+          _unitText = 'Kbps';
+        });
+      } else {
+        _showErrorDialog('Failed to download the file. Status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      _showErrorDialog('Error: $e');
+    }
   }
 
-  void _startSpeedSimulation() {
-    _speedUpdateTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      setState(() {
-        _downloadSpeed = (DateTime.now().millisecond % 100).toDouble();
-        _uploadSpeed = (DateTime.now().second % 50).toDouble();
-        _downloadAnimationController.animateTo(_downloadSpeed / 100);
-        _uploadAnimationController.animateTo(_uploadSpeed / 50);
-      });
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Error'),
+          content: Text(message),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+    setState(() {
+      _isTesting = false;
     });
   }
 
@@ -53,7 +84,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
           children: [
             Image.asset('assets/Intermessh.png', height: 30),
             const SizedBox(width: 10),
-            const Text('Internet Status'),
+            const Text('Internet Speed Test'),
           ],
         ),
         actions: [
@@ -83,11 +114,13 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
             ListTile(
               leading: const Icon(Icons.logout),
               title: const Text('Logout'),
-              // onPressed: () {
-              //   // Implement logout functionality
-              //   Navigator.of(context).pop(); // Close the drawer
-              //   // Add your logout logic here
-              // },
+              onTap: () async {
+                final pref = await SharedPreferences.getInstance();
+                await pref.remove("UserName");
+                if (context.mounted) {
+                  Navigator.of(context).pushReplacementNamed('/auth');
+                }
+              },
             ),
           ],
         ),
@@ -97,11 +130,13 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildSpeedometer('Download Speed', _downloadSpeed, _downloadAnimationController),
-            const SizedBox(height: 20),
-            _buildSpeedometer('Upload Speed', _uploadSpeed, _uploadAnimationController),
+            _buildSpeedometer('Download Speed', _downloadRate, _downloadProgress),
           ],
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _isTesting ? null : _startSpeedTest,
+        child: Icon(_isTesting ? Icons.hourglass_empty : Icons.refresh),
       ),
       bottomNavigationBar: BottomAppBar(
         child: Container(
@@ -120,75 +155,43 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
     );
   }
 
-  Widget _buildSpeedometer(String title, double speed, AnimationController controller) {
+  Widget _buildSpeedometer(String title, double speed, String progress) {
     return Column(
       children: [
         Text(title, style: Theme.of(context).textTheme.titleLarge),
         const SizedBox(height: 10),
-        SizedBox(
+        Container(
           height: 200,
-          child: AnimatedBuilder(
-            animation: controller,
-            builder: (context, child) {
-              return CustomPaint(
-                painter: SpeedometerPainter(
-                  speed: controller.value,
-                  color: Theme.of(context).primaryColor,
-                ),
-                child: Center(
-                  child: Text(
-                    '${speed.toStringAsFixed(1)} Mbps',
-                    style: Theme.of(context).textTheme.headlineSmall,
-                  ),
-                ),
-              );
-            },
+          width: double.infinity,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [Colors.blue, Colors.purple],
+            ),
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                '${speed.toStringAsFixed(2)} $_unitText',
+                style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Colors.white),
+              ),
+              SizedBox(height: 10),
+              Text(
+                'Progress: $progress%',
+                style: TextStyle(fontSize: 18, color: Colors.white),
+              ),
+              SizedBox(height: 20),
+              CircularProgressIndicator(
+                value: double.parse(progress) / 100,
+                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+              ),
+            ],
           ),
         ),
       ],
     );
   }
-}
-
-class SpeedometerPainter extends CustomPainter {
-  final double speed;
-  final Color color;
-
-  SpeedometerPainter({required this.speed, required this.color});
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final center = Offset(size.width / 2, size.height / 2);
-    final radius = size.width / 2;
-
-    final paint = Paint()
-      ..color = color
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 10;
-
-    canvas.drawArc(
-      Rect.fromCircle(center: center, radius: radius),
-      vector.radians(150),
-      vector.radians(240),
-      false,
-      paint,
-    );
-
-    final needlePaint = Paint()
-      ..color = color
-      ..style = PaintingStyle.fill;
-
-    final needleLength = radius - 20;
-    final angle = vector.radians(150 + 240 * speed);
-    final needleEnd = Offset(
-      center.dx + needleLength * cos(angle),
-      center.dy + needleLength * sin(angle),
-    );
-
-    canvas.drawLine(center, needleEnd, needlePaint..strokeWidth = 3);
-    canvas.drawCircle(center, 10, needlePaint);
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
 }
