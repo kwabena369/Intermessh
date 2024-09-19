@@ -1,6 +1,9 @@
+// ignore_for_file: use_super_parameters, prefer_final_fields
+
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import 'dart:async';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -12,68 +15,73 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   bool _isDarkMode = false;
   double _downloadRate = 0.0;
-  String _downloadProgress = '0';
-  String _unitText = 'Kbps';
-  bool _isTesting = false;
+  double _uploadRate = 0.0;
+  String _unitText = 'Mbps';
+  late Timer _timer;
 
   @override
   void initState() {
     super.initState();
-    _startSpeedTest();
+    _startContinuousSpeedTest();
   }
 
-  Future<void> _startSpeedTest() async {
-    setState(() {
-      _isTesting = true;
-      _downloadRate = 0.0;
-      _downloadProgress = '0';
-    });
+  @override
+  void dispose() {
+    _timer.cancel();
+    super.dispose();
+  }
 
-    final url = 'https://drive.google.com/file/d/1lEn1DtJQW6-nTcoS_FG7-EB3Kamy0147/view?usp=sharing';
+  void _startContinuousSpeedTest() {
+    _timer = Timer.periodic(Duration(seconds: 5), (timer) {
+      _measureDownloadSpeed();
+      _measureUploadSpeed();
+    });
+  }
+
+  Future<void> _measureDownloadSpeed() async {
+    final url = 'https://speed.cloudflare.com/__down?bytes=20000000'; // 20MB file
     final stopwatch = Stopwatch()..start();
 
     try {
       final response = await http.get(Uri.parse(url));
+      stopwatch.stop();
 
       if (response.statusCode == 200) {
-        final elapsed = stopwatch.elapsedMilliseconds;
-        final speedInKbps = ((response.bodyBytes.length / 1024) / (elapsed / 1000)) * 8;
+        final durationInSeconds = stopwatch.elapsedMilliseconds / 1000;
+        final fileSizeInBits = response.bodyBytes.length * 8;
+        final speedInMbps = (fileSizeInBits / durationInSeconds) / 1000000;
 
         setState(() {
-          _isTesting = false;
-          _downloadRate = speedInKbps;
-          _downloadProgress = '100';
-          _unitText = 'Kbps';
+          _downloadRate = speedInMbps;
         });
-      } else {
-        _showErrorDialog('Failed to download the file. Status code: ${response.statusCode}');
       }
     } catch (e) {
-      _showErrorDialog('Error: $e');
+      print('Download speed test error: $e');
     }
   }
 
-  void _showErrorDialog(String message) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Error'),
-          content: Text(message),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text('OK'),
-            ),
-          ],
-        );
-      },
-    );
-    setState(() {
-      _isTesting = false;
-    });
+  Future<void> _measureUploadSpeed() async {
+    final url = 'https://speed.cloudflare.com/__up';
+    final dataSize = 10000000; // 10MB of data
+    final data = List.filled(dataSize, 'a').join();
+    final stopwatch = Stopwatch()..start();
+
+    try {
+      final response = await http.post(Uri.parse(url), body: data);
+      stopwatch.stop();
+
+      if (response.statusCode == 200) {
+        final durationInSeconds = stopwatch.elapsedMilliseconds / 1000;
+        final dataSizeInBits = dataSize * 8;
+        final speedInMbps = (dataSizeInBits / durationInSeconds) / 1000000;
+
+        setState(() {
+          _uploadRate = speedInMbps;
+        });
+      }
+    } catch (e) {
+      print('Upload speed test error: $e');
+    }
   }
 
   @override
@@ -82,9 +90,9 @@ class _HomeState extends State<Home> {
       appBar: AppBar(
         title: Row(
           children: [
-            Image.asset('assets/Intermessh.png', height: 30),
+            Image.asset('assets/Intermessh.png', height: 50),
             const SizedBox(width: 10),
-            const Text('Internet Speed Test'),
+            const Text('Intermessh '),
           ],
         ),
         actions: [
@@ -130,13 +138,11 @@ class _HomeState extends State<Home> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildSpeedometer('Download Speed', _downloadRate, _downloadProgress),
+            _buildSpeedometer('Download Speed', _downloadRate),
+            const SizedBox(height: 20),
+            _buildSpeedometer('Upload Speed', _uploadRate),
           ],
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _isTesting ? null : _startSpeedTest,
-        child: Icon(_isTesting ? Icons.hourglass_empty : Icons.refresh),
       ),
       bottomNavigationBar: BottomAppBar(
         child: Container(
@@ -155,7 +161,7 @@ class _HomeState extends State<Home> {
     );
   }
 
-  Widget _buildSpeedometer(String title, double speed, String progress) {
+  Widget _buildSpeedometer(String title, double speed) {
     return Column(
       children: [
         Text(title, style: Theme.of(context).textTheme.titleLarge),
@@ -178,14 +184,9 @@ class _HomeState extends State<Home> {
                 '${speed.toStringAsFixed(2)} $_unitText',
                 style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Colors.white),
               ),
-              SizedBox(height: 10),
-              Text(
-                'Progress: $progress%',
-                style: TextStyle(fontSize: 18, color: Colors.white),
-              ),
               SizedBox(height: 20),
               CircularProgressIndicator(
-                value: double.parse(progress) / 100,
+                value: speed / 100, // Assuming max speed of 100 Mbps
                 valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
               ),
             ],
