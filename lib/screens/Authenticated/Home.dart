@@ -141,7 +141,13 @@ class _HomeState extends State<Home> {
             _buildSpeedometer('Download Speed', _downloadRate),
             const SizedBox(height: 20),
             _buildSpeedometer('Upload Speed', _uploadRate),
+            //  the btn to go to the payment
+            ElevatedButton(onPressed: (){
+                     Navigator.of(context).pushReplacementNamed('/Payment_/test');
+            }, child: Text("Test_Payment"))
           ],
+
+        
         ),
       ),
       bottomNavigationBar: BottomAppBar(
