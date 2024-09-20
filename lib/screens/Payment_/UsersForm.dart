@@ -1,5 +1,8 @@
+// ignore_for_file: unnecessary_import, avoid_print
+
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 //  handling of the input of name and other users info
 
 class UsersForm extends StatefulWidget{
@@ -106,7 +109,13 @@ obscureText: true,
 // then the elevated btn
 ElevatedButton(onPressed: (){
    
-   print(userEmail);
+
+   if(_User_form_key.currentState!.validate()){
+//  then saving of the whole thing 
+_User_form_key.currentState!.save();
+   print("$userEmail,Golden,$userName");
+   }
+
 }, child: const Text(" Send_Information"))
 
 
