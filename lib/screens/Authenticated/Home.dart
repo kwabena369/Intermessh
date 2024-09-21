@@ -144,7 +144,13 @@ class _HomeState extends State<Home> {
             //  the btn to go to the payment
             ElevatedButton(onPressed: (){
                      Navigator.of(context).pushReplacementNamed('/Payment_/test');
-            }, child: Text("Test_Payment"))
+            }, child: Text("Test_Payment")),
+
+            ElevatedButton(onPressed: (){
+                     Navigator.of(context).pushReplacementNamed('/FakeInfo');
+            }, child: Text("Fake_Info")),
+
+            
           ],
 
         

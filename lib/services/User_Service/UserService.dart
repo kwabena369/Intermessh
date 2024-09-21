@@ -50,3 +50,10 @@ class LoginService {
 //     }
 //   }
 // }
+
+//  in making the url thing we do something like thiing 
+//  We do something 
+//  http.post(url there,
+// header : {"content-Type":"application/json"}
+// )
+//  

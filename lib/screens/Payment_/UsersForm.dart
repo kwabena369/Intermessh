@@ -2,7 +2,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter_neumorphic/flutter_neumorphic.dart';
+import 'package:outcome/services/User_Service/Send_User_Info.dart';
+
+// import '../../services/User_Service/Send_User_Info.dart';
 //  handling of the input of name and other users info
 
 class UsersForm extends StatefulWidget{
@@ -24,6 +26,22 @@ String userName = "";
 String userEmail = "";
 String Password = "";
 String ConfirmPassword = "";
+
+//  this function would send the information 
+//  this function to do the actual thing 
+Future Process_Info() async{
+   if(_User_form_key.currentState!.validate()){
+    //  we do the saving of the form  
+     _User_form_key.currentState!.save();   
+    final value =  await  User_Content_Service.forwardInfo(userEmail, Password, userName);
+    //   the classic
+    
+
+   }else{
+ 
+ return "Enter_";
+   }
+}
 
 
 //  the designing of the page
@@ -107,13 +125,13 @@ obscureText: true,
 )
 ,
 // then the elevated btn
-ElevatedButton(onPressed: (){
+ElevatedButton(onPressed: ()async{
    
 
    if(_User_form_key.currentState!.validate()){
 //  then saving of the whole thing 
 _User_form_key.currentState!.save();
-   print("$userEmail,Golden,$userName");
+await Process_Info();
    }
 
 }, child: const Text(" Send_Information"))
