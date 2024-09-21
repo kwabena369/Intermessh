@@ -142,6 +142,12 @@ class _HomeState extends State<Home> {
             const SizedBox(height: 20),
             _buildSpeedometer('Upload Speed', _uploadRate),
             //  the btn to go to the payment
+
+
+
+ Padding(padding: EdgeInsets.all(20),
+ child: Row(
+              children: [
             ElevatedButton(onPressed: (){
                      Navigator.of(context).pushReplacementNamed('/Payment_/test');
             }, child: Text("Test_Payment")),
@@ -150,6 +156,14 @@ class _HomeState extends State<Home> {
                      Navigator.of(context).pushReplacementNamed('/FakeInfo');
             }, child: Text("Fake_Info")),
 
+            ElevatedButton(onPressed: (){
+               Navigator.of(context).pushReplacementNamed("/RealPayment");
+            }, child: Text("PaymentPay"))
+
+              ],
+            )
+,
+ )
             
           ],
 
