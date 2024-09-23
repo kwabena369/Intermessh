@@ -13,7 +13,7 @@ appBar: AppBar(
     child: Text("Payment Options"),
   ),
 ),
-    
+
     //   then the actional options
 
 body: Center(
@@ -27,7 +27,7 @@ body: Center(
   Text("Google Pay "),
    Text("Paypal Payment"),
     Text("Credit Account Payment"),
-    
+
 
 
 
