@@ -145,25 +145,25 @@ class _HomeState extends State<Home> {
 
 
 
- Padding(padding: EdgeInsets.all(20),
- child: Row(
-              children: [
-            ElevatedButton(onPressed: (){
-                     Navigator.of(context).pushReplacementNamed('/Payment_/test');
-            }, child: Text("Test_Payment")),
+//  Padding(padding: EdgeInsets.all(20),
+//  child: Row(
+//               children: [
+//             ElevatedButton(onPressed: (){
+//                      Navigator.of(context).pushReplacementNamed('/Payment_/test');
+//             }, child: Text("Test_Payment")),
 
-            ElevatedButton(onPressed: (){
-                     Navigator.of(context).pushReplacementNamed('/FakeInfo');
-            }, child: Text("Fake_Info")),
+//             ElevatedButton(onPressed: (){
+//                      Navigator.of(context).pushReplacementNamed('/FakeInfo');
+//             }, child: Text("Fake_Info")),
 
-            ElevatedButton(onPressed: (){
-               Navigator.of(context).pushReplacementNamed("/RealPayment");
-            }, child: Text("PaymentPay"))
+//             ElevatedButton(onPressed: (){
+//                Navigator.of(context).pushReplacementNamed("/RealPayment");
+//             }, child: Text("PaymentPay"))
 
-              ],
-            )
-,
- )
+//               ],
+//             )
+// ,
+//  )
             
           ],
 

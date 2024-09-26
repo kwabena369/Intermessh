@@ -35,8 +35,6 @@ Future Process_Info() async{
      _User_form_key.currentState!.save();   
     final value =  await  User_Content_Service.forwardInfo(userEmail, Password, userName);
     //   the classic
-    
-
    }else{
  
  return "Enter_";
