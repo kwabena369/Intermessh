@@ -5,8 +5,6 @@ import 'package:outcome/screens/Authen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:outcome/screens/Authenticated/Home.dart';
 import 'package:outcome/screens/FromBack/LocationWidget.dart';
-import 'package:outcome/screens/PaymentSelection/Real_Payment.dart';
-import 'package:outcome/screens/Payment_/UsersForm.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
@@ -31,9 +29,7 @@ void main() async {
     routes: {
       '/auth': (context) => const AuthenPage(),
       '/home': (context) => const Home(),
-      '/Payment_/test':(context)=>const UsersForm(),
       '/FakeInfo':(context)=> LocationWidget(),
-      'RealPayment':(context)=>const RealPayment(),
     },
   ));
 }

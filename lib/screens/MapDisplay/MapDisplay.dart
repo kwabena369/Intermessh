@@ -37,7 +37,11 @@ class _MapdisplayState extends State<Mapdisplay> {
                     SizedBox(
                       height: 12,
                     ),
-                    Text('Latitude :  34.00',style: ,),
+                    Text('Latitude :  34.00',style:TextStyle(
+                      color: Colors.black,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold
+                    ) ,),
                     SizedBox(
                       height: 12,
                     ),
