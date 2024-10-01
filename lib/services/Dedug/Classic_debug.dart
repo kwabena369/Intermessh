@@ -10,6 +10,8 @@ class Classic_debug {
 //  method for basic console.log
   Future<void> Check_try_two() async {
     //  makng the get called
-    http.Response responce = await http.get( Uri.parse('$base_url/testing'));
+    final http.Response responce =
+        await http.get(Uri.parse('$base_url/testing'));
+    print(responce);
   }
 }

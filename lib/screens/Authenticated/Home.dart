@@ -1,6 +1,7 @@
 // ignore_for_file: use_super_parameters, prefer_final_fields
 
 import 'package:flutter/material.dart';
+import 'package:outcome/services/Dedug/Classic_debug.dart';
 import 'package:outcome/services/Location_Asset/assets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
@@ -154,22 +155,28 @@ class _HomeState extends State<Home> {
 //                      Navigator.of(context).pushReplacementNamed('/Payment_/test');
 //             }, child: Text("Test_Payment")),
 
-            ElevatedButton(
-                onPressed: () async {
-                  Navigator.of(context).pushReplacementNamed('/FakeInfo');
-                  final value_Now = await LocationNow();
-                  value_Now.Getcurrent_location();
-                },
-                child: Text("Fake_Info -  ")),
-
-//             ElevatedButton(onPressed: (){
-//                Navigator.of(context).pushReplacementNamed("/RealPayment");
-//             }, child: Text("PaymentPay"))
-
-//               ],
-//             )
-// ,
-//  )
+            Padding(
+              padding: EdgeInsets.all(12),
+              child: Row(
+                children: [
+                  ElevatedButton(
+                      onPressed: () async {
+                        Navigator.of(context).pushReplacementNamed('/FakeInfo');
+                        final value_Now = await LocationNow();
+                        value_Now.Getcurrent_location();
+                      },
+                      child: Text("Fake_Info -  ")),
+//  for the backend socket side conection
+                  ElevatedButton(
+                      onPressed: () {
+                        print("btn_there");
+                        // Navigator.of(context).pushReplacementNamed('/testing')
+                      final Debug_class = Classic_debug().Check_try_two();
+                      },
+                      child: const Text("Debug"))
+                ],
+              ),
+            )
           ],
         ),
       ),
