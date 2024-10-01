@@ -1,6 +1,7 @@
 // ignore_for_file: use_super_parameters, prefer_final_fields
 
 import 'package:flutter/material.dart';
+import 'package:outcome/services/Location_Asset/assets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async';
@@ -39,7 +40,8 @@ class _HomeState extends State<Home> {
   }
 
   Future<void> _measureDownloadSpeed() async {
-    final url = 'https://speed.cloudflare.com/__down?bytes=20000000'; // 20MB file
+    final url =
+        'https://speed.cloudflare.com/__down?bytes=20000000'; // 20MB file
     final stopwatch = Stopwatch()..start();
 
     try {
@@ -138,12 +140,12 @@ class _HomeState extends State<Home> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            //  there is something there
+
             _buildSpeedometer('Download Speed', _downloadRate),
             const SizedBox(height: 20),
             _buildSpeedometer('Upload Speed', _uploadRate),
             //  the btn to go to the payment
-
-
 
 //  Padding(padding: EdgeInsets.all(20),
 //  child: Row(
@@ -152,9 +154,13 @@ class _HomeState extends State<Home> {
 //                      Navigator.of(context).pushReplacementNamed('/Payment_/test');
 //             }, child: Text("Test_Payment")),
 
-//             ElevatedButton(onPressed: (){
-//                      Navigator.of(context).pushReplacementNamed('/FakeInfo');
-//             }, child: Text("Fake_Info")),
+            ElevatedButton(
+                onPressed: () async {
+                  Navigator.of(context).pushReplacementNamed('/FakeInfo');
+                  final value_Now = await LocationNow();
+                  value_Now.Getcurrent_location();
+                },
+                child: Text("Fake_Info -  ")),
 
 //             ElevatedButton(onPressed: (){
 //                Navigator.of(context).pushReplacementNamed("/RealPayment");
@@ -164,10 +170,7 @@ class _HomeState extends State<Home> {
 //             )
 // ,
 //  )
-            
           ],
-
-        
         ),
       ),
       bottomNavigationBar: BottomAppBar(
@@ -208,7 +211,10 @@ class _HomeState extends State<Home> {
             children: [
               Text(
                 '${speed.toStringAsFixed(2)} $_unitText',
-                style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Colors.white),
+                style: TextStyle(
+                    fontSize: 32,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white),
               ),
               SizedBox(height: 20),
               CircularProgressIndicator(

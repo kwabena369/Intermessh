@@ -4,7 +4,7 @@ import 'package:outcome/firebase_options.dart';
 import 'package:outcome/screens/Authen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:outcome/screens/Authenticated/Home.dart';
-import 'package:outcome/screens/FromBack/Information.dart';
+import 'package:outcome/screens/FromBack/LocationWidget.dart';
 import 'package:outcome/screens/PaymentSelection/Real_Payment.dart';
 import 'package:outcome/screens/Payment_/UsersForm.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -32,7 +32,7 @@ void main() async {
       '/auth': (context) => const AuthenPage(),
       '/home': (context) => const Home(),
       '/Payment_/test':(context)=>const UsersForm(),
-      '/FakeInfo':(context)=>const Blog(),
+      '/FakeInfo':(context)=> LocationWidget(),
       'RealPayment':(context)=>const RealPayment(),
     },
   ));
