@@ -117,9 +117,26 @@ class _HomeState extends State<Home> {
               decoration: BoxDecoration(
                 color: Theme.of(context).primaryColor,
               ),
-              child: const Text(
-                'Menu',
-                style: TextStyle(color: Colors.white, fontSize: 24),
+              child: Container(
+//   here we do the placement of the logo andthe name
+     child: Center(
+       child: Row(
+         children: [
+          //   the logo
+          Image(image: AssetImage('assets/Intermessh.png'),width: 120, height: 120,),
+          //   the other element been the name
+
+ Padding(padding: EdgeInsets.only(left: 6),
+ child: Text("Intermessh",
+ style: TextStyle(
+  color: Colors.white,
+  fontSize: 25,
+  fontWeight: FontWeight.bold
+ ),),)
+         ],
+
+       ),
+     ),
               ),
             ),
             ListTile(
@@ -170,10 +187,11 @@ class _HomeState extends State<Home> {
                   ElevatedButton(
                       onPressed: () {
                         print("btn_there");
-                        // Navigator.of(context).pushReplacementNamed('/testing')
-                      final Debug_class = Classic_debug().Check_try_two();
+                        Navigator.of(context)
+                            .pushReplacementNamed('/FakeProximity');
+                        // final Debug_class = Classic_debug().Check_try_two();
                       },
-                      child: const Text("Debug"))
+                      child: const Text("FakeProximity"))
                 ],
               ),
             )

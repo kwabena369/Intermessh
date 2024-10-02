@@ -5,6 +5,8 @@ import 'package:outcome/screens/Authen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:outcome/screens/Authenticated/Home.dart';
 import 'package:outcome/screens/FromBack/LocationWidget.dart';
+import 'package:outcome/screens/MapDisplay/LocationSharingWidget.dart';
+import 'package:outcome/screens/MapDisplay/MapDisplay.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
@@ -30,6 +32,8 @@ void main() async {
       '/auth': (context) => const AuthenPage(),
       '/home': (context) => const Home(),
       '/FakeInfo':(context)=> LocationWidget(),
+      "/Proximity ":(context)=>Mapdisplay(),
+      '/FakeProximity':(context)=> LocationSharingWidget()
     },
   ));
 }
