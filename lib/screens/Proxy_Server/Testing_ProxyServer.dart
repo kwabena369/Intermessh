@@ -75,7 +75,8 @@ class _ProxyServerScreenState extends State<ProxyServerScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return SingleChildScrollView(
+        child: Scaffold(
       appBar: AppBar(title: Text('Local Network Proxy Server')),
       body: Center(
         child: Column(
@@ -93,6 +94,6 @@ class _ProxyServerScreenState extends State<ProxyServerScreen> {
           ],
         ),
       ),
-    );
+    ));
   }
 }
