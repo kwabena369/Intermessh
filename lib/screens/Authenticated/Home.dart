@@ -177,9 +177,14 @@ class _HomeState extends State<Home> {
               child: Row(
                 children: [
 
+SingleChildScrollView(
+
+   
+   child: 
  SafeArea(child: Center( child: Column(
    children: [
      
+
 
                    
                         ElevatedButton(
@@ -212,6 +217,7 @@ class _HomeState extends State<Home> {
    ],
  ),))
 
+              )
     
                 
                 ],
