@@ -7,6 +7,7 @@ import 'package:outcome/screens/Authenticated/Home.dart';
 import 'package:outcome/screens/FromBack/LocationWidget.dart';
 import 'package:outcome/screens/MapDisplay/LocationSharingWidget.dart';
 import 'package:outcome/screens/MapDisplay/MapDisplay.dart';
+import 'package:outcome/screens/Proxy_Server/Testing_ProxyServer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
@@ -33,7 +34,8 @@ void main() async {
       '/home': (context) => const Home(),
       '/FakeInfo':(context)=> LocationWidget(),
       "/Proximity ":(context)=>Mapdisplay(),
-      '/FakeProximity':(context)=> LocationSharingWidget()
+      '/FakeProximity':(context)=> LocationSharingWidget(),
+      '/TestProxy':(context)=> ProxyServerApp()
     },
   ));
 }

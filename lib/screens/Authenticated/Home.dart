@@ -176,22 +176,44 @@ class _HomeState extends State<Home> {
               padding: EdgeInsets.all(12),
               child: Row(
                 children: [
-                  ElevatedButton(
-                      onPressed: () async {
-                        Navigator.of(context).pushReplacementNamed('/FakeInfo');
-                        final value_Now = await LocationNow();
-                        value_Now.Getcurrent_location();
-                      },
-                      child: Text("Fake_Info -  ")),
+
+ SafeArea(child: Center( child: Column(
+   children: [
+     
+
+                   
+                        ElevatedButton(
+                            onPressed: () async {
+                              Navigator.of(context)
+                                  .pushReplacementNamed('/FakeInfo');
+                              final value_Now = await LocationNow();
+                              value_Now.Getcurrent_location();
+                            },
+                            child: Text("Fake_Info -  ")),
 //  for the backend socket side conection
-                  ElevatedButton(
-                      onPressed: () {
-                        print("btn_there");
-                        Navigator.of(context)
-                            .pushReplacementNamed('/FakeProximity');
-                        // final Debug_class = Classic_debug().Check_try_two();
-                      },
-                      child: const Text("FakeProximity"))
+                        ElevatedButton(
+                            onPressed: () {
+                              print("btn_there");
+                              Navigator.of(context)
+                                  .pushReplacementNamed('/FakeProximity');
+                              // final Debug_class = Classic_debug().Check_try_two();
+                            },
+                            child: const Text("ProxySever_Testing")),
+                        ElevatedButton(
+                            onPressed: () {
+                              Navigator.of(context)
+                                  .pushReplacementNamed('/TestProxy');
+                            },
+                            child: const Text("TestProxy"))
+                
+                
+            
+      
+   ],
+ ),))
+
+    
+                
                 ],
               ),
             )

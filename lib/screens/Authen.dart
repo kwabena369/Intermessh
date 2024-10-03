@@ -119,7 +119,7 @@ class _AuthenPageState extends State<AuthenPage> with SingleTickerProviderStateM
                         final pref = await SharedPreferences.getInstance();
                         pref.setString("UserName", userData['displayName']);
                         print(userData);
-                        // Navigator.of(context).pushReplacementNamed('/home');
+                        Navigator.of(context).pushReplacementNamed('/home');
                         return;
                       } else {
                         print('Sign in failed');

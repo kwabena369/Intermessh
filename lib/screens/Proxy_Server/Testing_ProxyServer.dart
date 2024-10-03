@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:shelf/shelf.dart' as shelf;
 import 'package:shelf/shelf_io.dart' as io;
 
-
 class ProxyServerApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -31,7 +30,6 @@ class _ProxyServerScreenState extends State<ProxyServerScreen> {
         includeLoopback: false,
         type: InternetAddressType.IPv4,
       );
-
       // Find the first non-loopback IPv4 address
       for (var interface in interfaces) {
         if (interface.addresses.isNotEmpty) {
@@ -39,7 +37,6 @@ class _ProxyServerScreenState extends State<ProxyServerScreen> {
           break;
         }
       }
-
       if (_ipAddress.isEmpty) {
         throw Exception('No valid network interface found');
       }
@@ -49,11 +46,9 @@ class _ProxyServerScreenState extends State<ProxyServerScreen> {
           .addHandler(_handleRequest);
 
       _server = await io.serve(handler, _ipAddress, _port);
-
       setState(() {
         _serverStatus = 'Running';
       });
-
       print('Server running on $_ipAddress:$_port');
     } catch (e) {
       print('Error starting server: $e');
