@@ -1,11 +1,8 @@
-// ignore_for_file: use_super_parameters, prefer_final_fields
-
 import 'package:flutter/material.dart';
-import 'package:outcome/services/Dedug/Classic_debug.dart';
-import 'package:outcome/services/Location_Asset/assets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -20,17 +17,28 @@ class _HomeState extends State<Home> {
   double _uploadRate = 0.0;
   String _unitText = 'Mbps';
   late Timer _timer;
+  String? _userName;
+  String? _userEmail;
 
   @override
   void initState() {
     super.initState();
     _startContinuousSpeedTest();
+    _loadUserData();
   }
 
   @override
   void dispose() {
     _timer.cancel();
     super.dispose();
+  }
+
+  Future<void> _loadUserData() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _userName = prefs.getString("UserName") ?? 'User';
+      _userEmail = prefs.getString("UserEmail") ?? '';
+    });
   }
 
   void _startContinuousSpeedTest() {
@@ -42,7 +50,7 @@ class _HomeState extends State<Home> {
 
   Future<void> _measureDownloadSpeed() async {
     final url =
-        'https://speed.cloudflare.com/__down?bytes=20000000'; // 20MB file
+        'https://speed.cloudflare.com/__down?bytes=20000000'; // that is something around ... 20MB file
     final stopwatch = Stopwatch()..start();
 
     try {
@@ -93,9 +101,10 @@ class _HomeState extends State<Home> {
       appBar: AppBar(
         title: Row(
           children: [
-            Image.asset('assets/Intermessh.png', height: 50),
+            Image.asset('assets/Intermessh.png', height: 40),
             const SizedBox(width: 10),
-            const Text('Intermessh '),
+            const Text('Intermessh',
+                style: TextStyle(fontWeight: FontWeight.bold)),
           ],
         ),
         actions: [
@@ -109,175 +118,178 @@ class _HomeState extends State<Home> {
           ),
         ],
       ),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: [
-            DrawerHeader(
-              decoration: BoxDecoration(
-                color: Theme.of(context).primaryColor,
-              ),
-              child: Container(
-//   here we do the placement of the logo andthe name
-     child: Center(
-       child: Row(
-         children: [
-          //   the logo
-          Image(image: AssetImage('assets/Intermessh.png'),width: 120, height: 120,),
-          //   the other element been the name
+      drawer: _buildDrawer(context),
+      body: _buildBody(),
+      bottomNavigationBar: _buildBottomAppBar(),
+    );
+  }
 
- Padding(padding: EdgeInsets.only(left: 6),
- child: Text("Intermessh",
- style: TextStyle(
-  color: Colors.white,
-  fontSize: 25,
-  fontWeight: FontWeight.bold
- ),),)
-         ],
-
-       ),
-     ),
-              ),
+  Widget _buildDrawer(BuildContext context) {
+    return Drawer(
+      child: ListView(
+        padding: EdgeInsets.zero,
+        children: [
+          UserAccountsDrawerHeader(
+            accountName: Text(_userName ?? 'User'),
+            accountEmail: Text(_userEmail ?? ''),
+            currentAccountPicture: CircleAvatar(
+              child: Icon(Icons.person, size: 50),
             ),
-            ListTile(
-              leading: const Icon(Icons.logout),
-              title: const Text('Logout'),
-              onTap: () async {
-                final pref = await SharedPreferences.getInstance();
-                await pref.remove("UserName");
-                if (context.mounted) {
-                  Navigator.of(context).pushReplacementNamed('/auth');
-                }
-              },
+            decoration: BoxDecoration(
+              color: Theme.of(context).primaryColor,
             ),
-          ],
-        ),
+          ),
+          ListTile(
+            leading: const Icon(Icons.person),
+            title: const Text('Profile'),
+            onTap: () {
+              // Navigate to profile page
+              Navigator.pop(context);
+//   the futrue profile and other
+            },
+           ),
+          ListTile(
+            leading: const Icon(Icons.settings),
+            title: const Text('Settings'),
+            onTap: () {
+              Navigator.pop(context);
+            },
+          ),
+          Divider(),
+          ListTile(
+            leading: const Icon(Icons.logout),
+            title: const Text('Logout'),
+            onTap: () async {
+              await FirebaseAuth.instance.signOut();
+              final pref = await SharedPreferences.getInstance();
+              await pref.remove("UserName");
+              await pref.remove("UserEmail");
+              if (context.mounted) {
+                Navigator.of(context).pushReplacementNamed('/auth');
+              }
+            },
+          ),
+        ],
       ),
-      body: Padding(
+    );
+  }
+
+//  the single card for the internet information 
+  Widget _buildBody() {
+    return SingleChildScrollView(
+      child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            //  there is something there
-
             _buildSpeedometer('Download Speed', _downloadRate),
             const SizedBox(height: 20),
             _buildSpeedometer('Upload Speed', _uploadRate),
-            //  the btn to go to the payment
-
-//  Padding(padding: EdgeInsets.all(20),
-//  child: Row(
-//               children: [
-//             ElevatedButton(onPressed: (){
-//                      Navigator.of(context).pushReplacementNamed('/Payment_/test');
-//             }, child: Text("Test_Payment")),
-
-            Padding(
-              padding: EdgeInsets.all(12),
-              child: Row(
-                children: [
-
-SingleChildScrollView(
-
-   
-   child: 
- SafeArea(child: Center( child: Column(
-   children: [
-     
-
-
-                   
-                        ElevatedButton(
-                            onPressed: () async {
-                              Navigator.of(context)
-                                  .pushReplacementNamed('/FakeInfo');
-                              final value_Now = await LocationNow();
-                              value_Now.Getcurrent_location();
-                            },
-                            child: Text("Fake_Info -  ")),
-//  for the backend socket side conection
-                        ElevatedButton(
-                            onPressed: () {
-                              print("btn_there");
-                              Navigator.of(context)
-                                  .pushReplacementNamed('/FakeProximity');
-                              // final Debug_class = Classic_debug().Check_try_two();
-                            },
-                            child: const Text("ProxySever_Testing")),
-                        ElevatedButton(
-                            onPressed: () {
-                              Navigator.of(context)
-                                  .pushReplacementNamed('/TestProxy');
-                            },
-                            child: const Text("TestProxy"))
-                
-                
-            
-      
-   ],
- ),))
-
-              )
-    
-                
-                ],
-              ),
-            )
+            const SizedBox(height: 20),
+            _buildActionButtons(),
           ],
-        ),
-      ),
-      bottomNavigationBar: BottomAppBar(
-        child: Container(
-          height: 50,
-          child: Center(
-            child: Text(
-              'Powered by Intermessh',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: Theme.of(context).primaryColor,
-              ),
-            ),
-          ),
         ),
       ),
     );
   }
 
   Widget _buildSpeedometer(String title, double speed) {
-    return Column(
-      children: [
-        Text(title, style: Theme.of(context).textTheme.titleLarge),
-        const SizedBox(height: 10),
-        Container(
-          height: 200,
-          width: double.infinity,
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [Colors.blue, Colors.purple],
+    return Card(
+      elevation: 4,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            Text(title, style: Theme.of(context).textTheme.titleLarge),
+            const SizedBox(height: 10),
+            Container(
+              height: 200,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [Colors.blue, Colors.purple],
+                ),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    '${speed.toStringAsFixed(2)} $_unitText',
+                    style: TextStyle(
+                        fontSize: 32,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white),
+                  ),
+                  SizedBox(height: 20),
+                  CircularProgressIndicator(
+                    value: speed / 100, // Assuming max speed of 100 Mbps
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                  ),
+                ],
+              ),
             ),
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                '${speed.toStringAsFixed(2)} $_unitText',
-                style: TextStyle(
-                    fontSize: 32,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white),
-              ),
-              SizedBox(height: 20),
-              CircularProgressIndicator(
-                value: speed / 100, // Assuming max speed of 100 Mbps
-                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-              ),
-            ],
-          ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildActionButtons() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        ElevatedButton.icon(
+          icon: Icon(Icons.info),
+          label: Text("Fake Info"),
+          onPressed: () async {
+            Navigator.of(context).pushNamed('/FakeInfo');
+            // Implement LocationNow().Getcurrent_location();
+          },
+          style: ElevatedButton.styleFrom(
+              padding: EdgeInsets.symmetric(vertical: 12)),
+        ),
+        SizedBox(height: 10),
+        ElevatedButton.icon(
+          icon: Icon(Icons.security),
+          label: Text("Proxy Server Testing"),
+          onPressed: () {
+            Navigator.of(context).pushNamed('/FakeProximity');
+          },
+          style: ElevatedButton.styleFrom(
+              padding: EdgeInsets.symmetric(vertical: 12)),
+        ),
+        SizedBox(height: 10),
+        ElevatedButton.icon(
+          icon: Icon(Icons.vpn_lock),
+          label: Text("Test Proxy"),
+          onPressed: () {
+            Navigator.of(context).pushNamed('/TestProxy');
+          },
+          style: ElevatedButton.styleFrom(
+              padding: EdgeInsets.symmetric(vertical: 12)),
         ),
       ],
+    );
+  }
+
+  Widget _buildBottomAppBar() {
+    return BottomAppBar(
+      child: Container(
+        height: 50,
+        child: Center(
+          child: Text(
+            'Powered by Intermessh',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: Theme.of(context).primaryColor,
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
