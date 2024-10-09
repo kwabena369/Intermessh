@@ -130,8 +130,8 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
           color: Colors.black,
           textColor: Colors.white,
           onPressed: () {
-            // TODO: Implement Apple sign in
-          },
+  //  the apple  authen system here 
+           },
         ),
       ],
     );
@@ -261,7 +261,7 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
       try {
         final result = await AuthService.signUp(_emailController.text, _passwordController.text);
         if (result) {
-          // Handle successful sign up
+//   then the nigger goes to the other side 
           if (mounted) Navigator.of(context).pushReplacementNamed('/home');
         } else {
           _showErrorSnackBar('Sign up failed. Please try again.');

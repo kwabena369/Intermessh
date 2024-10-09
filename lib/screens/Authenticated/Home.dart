@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:outcome/services/auth_service.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -147,7 +148,7 @@ class _HomeState extends State<Home> {
               Navigator.pop(context);
 //   the futrue profile and other
             },
-           ),
+          ),
           ListTile(
             leading: const Icon(Icons.settings),
             title: const Text('Settings'),
@@ -160,7 +161,7 @@ class _HomeState extends State<Home> {
             leading: const Icon(Icons.logout),
             title: const Text('Logout'),
             onTap: () async {
-              await FirebaseAuth.instance.signOut();
+             await AuthService.signOut();
               final pref = await SharedPreferences.getInstance();
               await pref.remove("UserName");
               await pref.remove("UserEmail");
@@ -174,7 +175,7 @@ class _HomeState extends State<Home> {
     );
   }
 
-//  the single card for the internet information 
+//  the single card for the internet information
   Widget _buildBody() {
     return SingleChildScrollView(
       child: Padding(
