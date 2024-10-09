@@ -1,7 +1,10 @@
 
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-
+ /**
+  * 
+  this is the junk just test
+  */
 //  this is the service for sending the information 
 // ignore: camel_case_types
 class User_Content_Service{
@@ -9,7 +12,7 @@ class User_Content_Service{
   static const base_url = 'http://192.168.88.148:3000';
 
   //  the method for sending the actual content
-  static Future<bool>forwardInfo(String Useremail,String  Userpassword, String Username) async{
+  static Future<bool>forwardInfo(String userEmail,String  userPassword) async{
 //   the joining of the url
 final Forwarding_url = Uri.parse("$base_url/Authentitcation");
 
@@ -18,9 +21,8 @@ try {
   http.post(Forwarding_url
  ,headers:{'Content-Type':'application/json'},
  body: json.encode({
-  Useremail:Useremail,
-  Userpassword:Userpassword,
-  Username : Username
+  "Useremail":userEmail,
+  "Userpassword":userPassword,
  }) 
  
  );

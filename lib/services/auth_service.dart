@@ -1,54 +1,69 @@
-// frontend/lib/services/auth_service.dart
-import 'dart:convert';
-import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
 class AuthService {
-  final String baseUrl = 'http://localhost::3000/api';
-  final storage = FlutterSecureStorage();
+  static final FirebaseAuth _auth = FirebaseAuth.instance;
+  static final GoogleSignIn _googleSignIn = GoogleSignIn();
 
-  Future<bool> register(String email, String password) async {
-    final response = await http.post(
-      Uri.parse('$baseUrl/auth/register'),
-      headers: {'Content-Type': 'application/json'},
-      body: json.encode({'email': email, 'password': password}),
-    );
+  static Future<Map<String, dynamic>?> signInWithGoogle() async {
+    try {
+      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+      if (googleUser == null) return null;
 
-    if (response.statusCode == 201) {
-      final token = json.decode(response.body)['token'];
-      await storage.write(key: 'auth_token', value: token);
-      return true;
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      final UserCredential userCredential =
+          await _auth.signInWithCredential(credential);
+      final User? user = userCredential.user;
+
+      if (user != null) {
+        return {
+          'uid': user.uid,
+          'displayName': user.displayName,
+          'email': user.email,
+        };
+      }
+    } catch (e) {
+      print('Error during Google sign in: $e');
     }
-    return false;
+    return null;
   }
-  //   
 
-  Future<bool> login(String email, String password) async {
-    final response = await http.post(
-      Uri.parse('$baseUrl/auth/login'),
-      headers: {'Content-Type': 'application/json'},
-      body: json.encode({'email': email, 'password': password}),
-    );
-
-    if (response.statusCode == 200) {
-      final token = json.decode(response.body)['token'];
-      await storage.write(key: 'auth_token', value: token);
-      return true;
+  static Future<bool> signUp(String email, String password) async {
+    try {
+      final UserCredential userCredential =
+          await _auth.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+      return userCredential.user != null;
+    } catch (e) {
+      print('Error during sign up: $e');
+      return false;
     }
-    return false;
   }
 
-  Future<void> logout() async {
-    await storage.delete(key: 'auth_token');
-    // with the use of the SharedPeference thing we make changes
-
+  static Future<bool> signIn(String email, String password) async {
+    try {
+      final UserCredential userCredential =
+          await _auth.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+      return userCredential.user != null;
+    } catch (e) {
+      print('Error during sign in: $e');
+      return false;
+    }
   }
 
-  Future<bool> isLoggedIn() async {
-    final token = await storage.read(key: 'auth_token');
-    return token != null;
+  static Future<void> signOut() async {
+    await _auth.signOut();
+    await _googleSignIn.signOut();
   }
 }

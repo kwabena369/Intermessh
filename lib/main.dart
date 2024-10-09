@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:outcome/firebase_options.dart';
-import 'package:outcome/screens/Authen.dart';
+import 'package:outcome/screens/AuthScreen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:outcome/screens/Authenticated/Home.dart';
 import 'package:outcome/screens/FromBack/LocationWidget.dart';
@@ -30,7 +30,7 @@ void main() async {
     title: 'Intermessh',
     debugShowCheckedModeBanner: false,
     routes: {
-      '/auth': (context) => const AuthenPage(),
+      '/auth': (context) => const AuthScreen(),
       '/home': (context) => const Home(),
       '/FakeInfo':(context)=> LocationWidget(),
       "/Proximity ":(context)=>Mapdisplay(),
