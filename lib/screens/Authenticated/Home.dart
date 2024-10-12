@@ -6,7 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:outcome/services/auth_service.dart';
 
 class Home extends StatefulWidget {
-  const Home({Key? key}) : super(key: key);
+  const Home({super.key});
 
   @override
   _HomeState createState() => _HomeState();
@@ -16,7 +16,7 @@ class _HomeState extends State<Home> {
   bool _isDarkMode = false;
   double _downloadRate = 0.0;
   double _uploadRate = 0.0;
-  String _unitText = 'Mbps';
+  final String _unitText = 'Mbps';
   late Timer _timer;
   String? _userName;
   String? _userEmail;
@@ -50,7 +50,7 @@ class _HomeState extends State<Home> {
   }
 
   Future<void> _measureDownloadSpeed() async {
-    final url =
+    const url =
         'https://speed.cloudflare.com/__down?bytes=20000000'; // that is something around ... 20MB file
     final stopwatch = Stopwatch()..start();
 
@@ -73,8 +73,8 @@ class _HomeState extends State<Home> {
   }
 
   Future<void> _measureUploadSpeed() async {
-    final url = 'https://speed.cloudflare.com/__up';
-    final dataSize = 10000000; // 10MB of data
+    const url = 'https://speed.cloudflare.com/__up';
+    const dataSize = 10000000; // 10MB of data
     final data = List.filled(dataSize, 'a').join();
     final stopwatch = Stopwatch()..start();
 
@@ -211,7 +211,7 @@ class _HomeState extends State<Home> {
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
-                  colors: [Colors.blue, Colors.purple],
+                  colors: const [Colors.blue, Colors.purple],
                 ),
                 borderRadius: BorderRadius.circular(20),
               ),
@@ -279,7 +279,7 @@ class _HomeState extends State<Home> {
 
   Widget _buildBottomAppBar() {
     return BottomAppBar(
-      child: Container(
+      child: SizedBox(
         height: 50,
         child: Center(
           child: Text(

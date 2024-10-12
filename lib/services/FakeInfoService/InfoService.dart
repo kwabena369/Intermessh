@@ -13,9 +13,9 @@ class Bring_Info {
       // the call to the back
    
   //   combinding of the url
-  final _real_deal = Uri.parse('$base_url/info');
+  final real_deal = Uri.parse('$base_url/info');
 
- final responce = await http.get(_real_deal);
+ final responce = await http.get(real_deal);
   
    if(responce.statusCode ==200){
 //  getting the content in there

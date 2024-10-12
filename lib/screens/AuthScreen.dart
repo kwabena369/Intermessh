@@ -6,7 +6,7 @@ import 'package:outcome/services/auth_service.dart';
 import '../widgets/custome_SignIn_btn.dart';
 
 class AuthScreen extends StatefulWidget {
-  const AuthScreen({Key? key}) : super(key: key);
+  const AuthScreen({super.key});
 
   @override
   _AuthScreenState createState() => _AuthScreenState();
@@ -208,7 +208,6 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
 
   Widget _buildSignUpButton() {
     return ElevatedButton(
-      child: const Text('Sign Up'),
       style: ElevatedButton.styleFrom(
         foregroundColor: Colors.white,
         backgroundColor: Colors.red,
@@ -216,6 +215,7 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
       onPressed: _handleSignUp,
+      child: const Text('Sign Up'),
     );
   }
 

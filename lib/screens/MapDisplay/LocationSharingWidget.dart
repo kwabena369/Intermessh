@@ -5,6 +5,8 @@ import 'dart:convert';
 import 'package:geolocator/geolocator.dart';
 
 class LocationSharingWidget extends StatefulWidget {
+  const LocationSharingWidget({super.key});
+
   @override
   _LocationSharingWidgetState createState() => _LocationSharingWidgetState();
 }

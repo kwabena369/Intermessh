@@ -6,6 +6,8 @@ import 'package:http/http.dart' as http;
 import 'package:network_info_plus/network_info_plus.dart';
 
 class ProxyServerApp extends StatelessWidget {
+  const ProxyServerApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -15,13 +17,15 @@ class ProxyServerApp extends StatelessWidget {
 }
 
 class ProxyServerScreen extends StatefulWidget {
+  const ProxyServerScreen({super.key});
+
   @override
   _ProxyServerScreenState createState() => _ProxyServerScreenState();
 }
 class _ProxyServerScreenState extends State<ProxyServerScreen> {
   bool _isServerRunning = false;
   String _ipAddress = '';
-  int _port = 8080;
+  final int _port = 8080;
   HttpServer? _server;
   final info = NetworkInfo();
 

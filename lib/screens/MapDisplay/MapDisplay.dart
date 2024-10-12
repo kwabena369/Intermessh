@@ -33,7 +33,7 @@ class _MapdisplayState extends State<Mapdisplay> {
               Center(
                 child: Container(
                     child: Row(
-                  children: <Widget> [
+                  children: const <Widget> [
                     SizedBox(
                       height: 12,
                     ),

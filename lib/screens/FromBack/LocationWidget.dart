@@ -5,6 +5,8 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class LocationWidget extends StatefulWidget {
+  const LocationWidget({super.key});
+
   @override
   _LocationWidgetState createState() => _LocationWidgetState();
 }

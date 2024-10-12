@@ -8,13 +8,13 @@ class CustomSignInButton extends StatelessWidget {
   final VoidCallback onPressed;
 
   const CustomSignInButton({
-    Key? key,
+    super.key,
     required this.icon,
     required this.text,
     required this.color,
     required this.textColor,
     required this.onPressed,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

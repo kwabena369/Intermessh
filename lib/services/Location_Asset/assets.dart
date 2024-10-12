@@ -11,7 +11,7 @@ class LocationNow {
   late LocationData _Location_Values;
   late PermissionStatus _permission_status_now;
 
-  Location location = new Location();
+  Location location = Location();
 
   Future<void> Getcurrent_location() async {
     //   checking whether it is enable in the environment
