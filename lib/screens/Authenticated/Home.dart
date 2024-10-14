@@ -84,7 +84,7 @@ class _HomeState extends State<Home> {
 
       if (response.statusCode == 200) {
         final durationInSeconds = stopwatch.elapsedMilliseconds / 1000;
-        final dataSizeInBits = dataSize * 8;
+        const dataSizeInBits = dataSize * 8;
         final speedInMbps = (dataSizeInBits / durationInSeconds) / 1000000;
 
         setState(() {
