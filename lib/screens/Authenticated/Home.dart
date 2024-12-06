@@ -11,7 +11,7 @@ class Home extends StatefulWidget {
   @override
   _HomeState createState() => _HomeState();
 }
-
+// there is something 
 class _HomeState extends State<Home> {
   bool _isDarkMode = false;
   double _downloadRate = 0.0;
