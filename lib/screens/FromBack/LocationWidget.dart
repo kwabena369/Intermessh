@@ -10,7 +10,7 @@ class LocationWidget extends StatefulWidget {
   @override
   _LocationWidgetState createState() => _LocationWidgetState();
 }
-
+// Green space
 class _LocationWidgetState extends State<LocationWidget> {
   String _latitude = 'Unknown';
   String _longitude = 'Unknown';
